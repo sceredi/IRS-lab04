@@ -1,0 +1,10 @@
+{
+    "diagnostics.globals": [
+        "init",
+        "collision_avoidance",
+        "step",
+        "light_controller",
+        "reset",
+        "destroy"
+    ]
+}
