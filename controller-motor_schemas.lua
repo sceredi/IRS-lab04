@@ -17,12 +17,12 @@ function init()
 end
 
 local function uniform_field(length, angle)
-	return { length = length / D, angle = angle }
+	return { length = math.min(length, D) / D, angle = angle }
 end
 
 local function attraction_field(distance, angle)
 	local length = 0
-	if distance <= D then
+	if distance > 0 then
 		length = math.min(distance, D) / D
 	else
 		length = 0
@@ -32,7 +32,7 @@ end
 
 local function repulsive_field(distance, angle)
 	local length = 0
-	if distance <= D then
+	if distance > 0 then
 		length = math.min(distance, D) / D
 	else
 		length = 0
@@ -48,7 +48,7 @@ local function tangential_field(distance, angle)
 	else
 		angle_ret = angle + math.pi / 2
 	end
-	if distance <= D then
+	if distance > 0 then
 		length = math.min(distance, D) / D
 	else
 		length = 0
