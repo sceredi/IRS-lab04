@@ -18,7 +18,13 @@ function init()
 end
 
 local function uniform_field(strength, angle)
-	return { length = math.min(strength, S) / S, angle = angle }
+	local length = 0
+	if strength > 0 then
+		length = math.min(strength, S) / S
+	else
+		length = 0
+	end
+	return { length = length, angle = angle }
 end
 
 local function attraction_field(strength, angle)
@@ -77,8 +83,8 @@ function step()
 	local light_polar_val = go_towards_light()
 	local obstacle_repulsion = repulsive_field(obstacle_polar_val.strength, obstacle_polar_val.angle)
 	local light_attraction = attraction_field(light_polar_val.strength, light_polar_val.angle)
-	local go_straight = uniform_field((1 - light_attraction.length) * S, 0)
-	local obstacle_tangential = tangential_field(obstacle_polar_val.strength * 1.2, obstacle_polar_val.angle)
+	local go_straight = uniform_field(0.5 - light_polar_val.strength, 0)
+	local obstacle_tangential = tangential_field(obstacle_polar_val.strength * 2, obstacle_polar_val.angle)
 	local sum = vector.vec2_polar_sum(go_straight, obstacle_repulsion)
 	sum = vector.vec2_polar_sum(sum, light_attraction)
 	sum = vector.vec2_polar_sum(sum, obstacle_tangential)

@@ -15,13 +15,8 @@ function M.closest_proximity_sensor()
 end
 
 function M.sum_proximity_sensors()
-	local first = robot_wrapper.get_proximity_sensor_readings()[1]
-	local second = robot_wrapper.get_proximity_sensor_readings()[2]
-	local sum = vector.vec2_polar_sum(
-		{ length = first.value, angle = first.angle },
-		{ length = second.value, angle = second.angle }
-	)
-	for i = 3, 24 do
+	local sum = { length = 0, angle = 0 }
+	for i = 1, 24 do
 		sum = vector.vec2_polar_sum(sum, {
 			length = robot_wrapper.get_proximity_sensor_readings()[i].value,
 			angle = robot_wrapper.get_proximity_sensor_readings()[i].angle,
@@ -61,13 +56,8 @@ function M.two_most_bright_lights()
 end
 
 function M.sum_light_sensors()
-	local first = robot_wrapper.get_light_sensor_readings()[1]
-	local second = robot_wrapper.get_light_sensor_readings()[2]
-	local sum = vector.vec2_polar_sum(
-		{ length = first.value, angle = first.angle },
-		{ length = second.value, angle = second.angle }
-	)
-	for i = 3, 24 do
+	local sum = { length = 0, angle = 0 }
+	for i = 1, 24 do
 		sum = vector.vec2_polar_sum(sum, {
 			length = robot_wrapper.get_light_sensor_readings()[i].value,
 			angle = robot_wrapper.get_light_sensor_readings()[i].angle,
