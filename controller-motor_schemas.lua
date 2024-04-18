@@ -6,7 +6,7 @@ local perceptual_schemas = require("src.perceptual_schemas")
 local vector = require("src.vector")
 
 local MAX_VELOCITY = 15
-local D = 1
+local S = 1
 
 local n_steps = 0
 
@@ -17,31 +17,31 @@ function init()
 	logger.log("lets go")
 end
 
-local function uniform_field(length, angle)
-	return { length = math.min(length, D) / D, angle = angle }
+local function uniform_field(strength, angle)
+	return { length = math.min(strength, S) / S, angle = angle }
 end
 
-local function attraction_field(distance, angle)
+local function attraction_field(strength, angle)
 	local length = 0
-	if distance > 0 then
-		length = math.min(distance, D) / D
+	if strength > 0 then
+		length = math.min(strength, S) / S
 	else
 		length = 0
 	end
 	return { length = length, angle = angle }
 end
 
-local function repulsive_field(distance, angle)
+local function repulsive_field(strength, angle)
 	local length = 0
-	if distance > 0 then
-		length = math.min(distance, D) / D
+	if strength > 0 then
+		length = math.min(strength, S) / S
 	else
 		length = 0
 	end
 	return { length = length, angle = -angle }
 end
 
-local function tangential_field(distance, angle)
+local function tangential_field(strength, angle)
 	local length = 0
 	local angle_ret = 0
 	if angle > 0 then
@@ -49,8 +49,8 @@ local function tangential_field(distance, angle)
 	else
 		angle_ret = angle + math.pi / 2
 	end
-	if distance > 0 then
-		length = math.min(distance, D) / D
+	if strength > 0 then
+		length = math.min(strength, S) / S
 	else
 		length = 0
 	end
@@ -59,12 +59,12 @@ end
 
 local function avoid_obstacles()
 	local closest_prox = perceptual_schemas.sum_proximity_sensors()
-	return { distance = closest_prox.length, angle = closest_prox.angle }
+	return { strength = closest_prox.length, angle = closest_prox.angle }
 end
 
 local function go_towards_light()
 	local lights = perceptual_schemas.sum_light_sensors()
-	return { distance = lights.length, angle = lights.angle }
+	return { strength = lights.length, angle = lights.angle }
 end
 
 --[[ This function is executed at each time step
@@ -75,10 +75,10 @@ function step()
 	local right_vel = 0
 	local obstacle_polar_val = avoid_obstacles()
 	local light_polar_val = go_towards_light()
-	local obstacle_repulsion = repulsive_field(obstacle_polar_val.distance, obstacle_polar_val.angle)
-	local light_attraction = attraction_field(light_polar_val.distance, light_polar_val.angle)
-	local go_straight = uniform_field((1 - light_attraction.length) * D, 0)
-	local obstacle_tangential = tangential_field(obstacle_polar_val.distance * 1.2, obstacle_polar_val.angle)
+	local obstacle_repulsion = repulsive_field(obstacle_polar_val.strength, obstacle_polar_val.angle)
+	local light_attraction = attraction_field(light_polar_val.strength, light_polar_val.angle)
+	local go_straight = uniform_field((1 - light_attraction.length) * S, 0)
+	local obstacle_tangential = tangential_field(obstacle_polar_val.strength * 1.2, obstacle_polar_val.angle)
 	local sum = vector.vec2_polar_sum(go_straight, obstacle_repulsion)
 	sum = vector.vec2_polar_sum(sum, light_attraction)
 	sum = vector.vec2_polar_sum(sum, obstacle_tangential)
