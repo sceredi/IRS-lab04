@@ -63,11 +63,8 @@ local function avoid_obstacles()
 end
 
 local function go_towards_light()
-	local lights = perceptual_schemas.two_most_bright_lights()
-	local first = lights.first
-	local second = lights.second
-	local light = vector.vec2_polar_sum(first, second)
-	return { distance = light.length, angle = light.angle }
+	local lights = perceptual_schemas.sum_light_sensors()
+	return { distance = lights.length, angle = lights.angle }
 end
 
 --[[ This function is executed at each time step

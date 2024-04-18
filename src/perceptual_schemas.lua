@@ -60,7 +60,7 @@ function M.two_most_bright_lights()
 	}
 end
 
-function M.lights_sum()
+function M.sum_light_sensors()
 	local first = robot_wrapper.get_light_sensor_readings()[1]
 	local second = robot_wrapper.get_light_sensor_readings()[2]
 	local sum = vector.vec2_polar_sum(
