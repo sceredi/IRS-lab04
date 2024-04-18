@@ -2,6 +2,7 @@
 local robot_wrapper = require("src.wrapper.robot_wrapper")
 local logger = require("src.wrapper.logger")
 local utils = require("src.utils")
+local perceptual_schemas = require("src.perceptual_schemas")
 local vector = require("src.vector")
 
 local MAX_VELOCITY = 15
@@ -57,12 +58,12 @@ local function tangential_field(distance, angle)
 end
 
 local function avoid_obstacles()
-	local closest_prox = utils.closest_proximity_sensor()
+	local closest_prox = perceptual_schemas.sum_proximity_sensors()
 	return { distance = closest_prox.length, angle = closest_prox.angle }
 end
 
 local function go_towards_light()
-	local lights = utils.two_most_bright_lights()
+	local lights = perceptual_schemas.two_most_bright_lights()
 	local first = lights.first
 	local second = lights.second
 	local light = vector.vec2_polar_sum(first, second)
@@ -77,14 +78,12 @@ function step()
 	local right_vel = 0
 	local obstacle_polar_val = avoid_obstacles()
 	local light_polar_val = go_towards_light()
-	local go_straight = uniform_field(0.3, 0)
 	local obstacle_repulsion = repulsive_field(obstacle_polar_val.distance, obstacle_polar_val.angle)
-	local light_attraction = attraction_field(light_polar_val.distance * 2, light_polar_val.angle)
+	local light_attraction = attraction_field(light_polar_val.distance, light_polar_val.angle)
+	local go_straight = uniform_field((1 - light_attraction.length) * D, 0)
 	local obstacle_tangential = tangential_field(obstacle_polar_val.distance * 1.2, obstacle_polar_val.angle)
 	local sum = vector.vec2_polar_sum(go_straight, obstacle_repulsion)
-	logger.log("sum before light: " .. sum.length .. " angle: " .. sum.angle)
 	sum = vector.vec2_polar_sum(sum, light_attraction)
-	logger.log("sum after light: " .. sum.length .. " angle: " .. sum.angle)
 	sum = vector.vec2_polar_sum(sum, obstacle_tangential)
 	left_vel, right_vel = utils.translational_to_differential(sum.length, sum.angle)
 	local maxValue = math.max(left_vel, right_vel)
