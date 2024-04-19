@@ -90,7 +90,7 @@ is not visible. A bit of fine tuning of the field strength was required as a val
 the obstacle, while a value too low make not create a strong enough field. The value decided in for this field is
 as follows:
 ```lua
-local obstacle_tangential = tangential_field(obstacle_polar_val.strength * 2, obstacle_polar_val.angle)
+local obstacle_tangential = tangential_field(obstacle_polar_val.strength * 10, obstacle_polar_val.angle)
 ```
 In the end the vectors of all the fields get summed, transformed into the differential steering model and sent
 to the wheels.
